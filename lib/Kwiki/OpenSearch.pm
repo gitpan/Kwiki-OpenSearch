@@ -1,13 +1,10 @@
 package Kwiki::OpenSearch;
 
 use strict;
-use vars qw($VERSION);
-$VERSION = '0.01';
-
 use Kwiki::Plugin '-Base';
 use Kwiki::Installer '-base';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 const class_id    => 'opensearch';
 const class_title => 'A9 OpenSearch';
@@ -24,13 +21,14 @@ sub do_search {
     my $url   = shift;
     my $query = shift;
 
+    my($opensearch, $feed);
     eval {
 	require WWW::OpenSearch;
-	my $opensearch = WWW::OpenSearch->new($url);
-	my $feed = $opensearch->search($query);
-	return $opensearch, $feed;
+	$opensearch = WWW::OpenSearch->new($url);
+	$feed = $opensearch->search($query);
     };
     $self->error($@) if $@;
+    return $opensearch, $feed;
 }
 
 package Kwiki::OpenSearch::Wafl;
@@ -64,16 +62,14 @@ Kwiki::OpenSearch - OpenSearch plugin for Kwiki
 
 =head1 SYNOPSIS
 
-  use Kwiki::OpenSearch;
-  # I don't know how to use it. But it should work.
+  > echo Kwiki::OpenSearch >> plugins
+  > kwiki -update
 
-=head1 BUGS
-
-It's not tested as I don't have a testable Kwiki instance.
+  {opensearch http://example.com/opensearch.xml Something}
 
 =head1 DESCRIPTION
 
-Kwiki::OpenSearch is a plugin to search A9's OpenSearch compatible search engines from inside Kwiki using Wafl.
+Kwiki::OpenSearch is a plugin to search A9's OpenSearch compatible search engines from inside Kwiki using Wafl. See http://opensearch.a9.com/ what is OpenSearch and http://opensearch.a9.com/-/search/moreColumns.jsp for available engines.
 
 =head1 AUTHOR
 
@@ -86,7 +82,7 @@ it under the same terms as Perl itself.
 
 =head1 SEE ALSO
 
-L<Kwiki::Yahoo>
+L<WWW::OpenSearch>, L<Kwiki::Yahoo>
 
 =cut
 
